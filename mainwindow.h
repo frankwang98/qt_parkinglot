@@ -11,6 +11,17 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+struct Car {
+    float x, y;
+    float angle;
+    int targetSpot;
+    float targetX, targetY;
+    int parkingState; // 0=调整角度, 1=调整位置
+    QList<QPoint> trajectory; // 轨迹点
+    bool isParking;
+    QColor color;
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -25,14 +36,14 @@ protected:
 
 private:
     void drawParkingLot(QPainter &painter);
-    void drawCar(QPainter &painter, int x, int y, float angle);
+    void drawCar(QPainter &painter, const Car &car);
 
     void startParkingProcess();
     void stopParkingProcess();
-    void moveCarToSpot();
+    void moveCarsToSpots();
 
     // 泊车算法
-    void closestPark();
+    void closestPark(int carIndex);
 
     // 控件
     QPushButton *startButton;
@@ -53,7 +64,6 @@ private:
     // 控制泊车状态
     bool isParking;
     int currentTargetSpot;
-    // int parkingAlgorithm;  // 泊车算法选择
     float steeringAngle;  // 当前的转向角度
     float steeringRadius; // 当前转向半径
 
@@ -61,6 +71,10 @@ private:
     float rotationSpeed = 2.0;    // 角度调整速度
     float movementSpeed = 2.0;    // 位置移动速度
     int parkingState;             // 泊车状态：0=调整角度, 1=调整位置
+    
+    QList<Car> cars;
+    int currentParkingCarIndex;
+    QList<QRect> occupiedSpots; // 已占用的停车位
 
 private:
     Ui::MainWindow *ui;
